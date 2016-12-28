@@ -2,6 +2,7 @@ AM_CPPFLAGS = \
 	$(dbus_CFLAGS) \
 	$(glib_CFLAGS) \
 	$(ecore_CFLAGS) \
+	$(boost_CFLAGS) \
 	$(PTHREAD_CFLAGS) \
 	$(PRIVATE_CFLAGS) \
 	-I$(top_srcdir)/include \
@@ -15,6 +16,11 @@ endif
 if ENABLE_ECORE
 ECORE_H = $(HEADER_DIR)/ecore-integration.h
 ECORE_CPP = ecore-integration.cpp
+endif
+
+if ENABLE_BOOST
+BOOST_H = $(HEADER_DIR)/boost-asio-integration.h
+BOOST_CPP = boost-asio-integration.cpp
 endif
 
 HEADER_DIR  = $(top_srcdir)/include/dbus-c++
@@ -37,14 +43,35 @@ HEADER_FILES = \
 	$(HEADER_DIR)/api.h \
 	$(HEADER_DIR)/eventloop.h \
 	$(HEADER_DIR)/eventloop-integration.h \
-	$(GLIB_H) $(ECORE_H)
+	$(GLIB_H) $(ECORE_H) $(BOOST_H)
 
 lib_includedir=$(includedir)/dbus-c++-1/dbus-c++/
 lib_include_HEADERS = $(HEADER_FILES)
 
 lib_LTLIBRARIES = libdbus-c++-1.la
-libdbus_c___1_la_SOURCES = $(HEADER_FILES) interface.cpp object.cpp introspection.cpp debug.cpp types.cpp connection.cpp connection_p.h property.cpp dispatcher.cpp dispatcher_p.h pendingcall.cpp pendingcall_p.h error.cpp internalerror.h message.cpp message_p.h server.cpp server_p.h eventloop.cpp eventloop-integration.cpp $(GLIB_CPP) $(ECORE_CPP)
-libdbus_c___1_la_LIBADD = $(dbus_LIBS) $(glib_LIBS) $(PTHREAD_CFLAGS) $(PTHREAD_LIBS) $(ecore_LIBS)
+libdbus_c___1_la_SOURCES = $(HEADER_FILES) \
+	interface.cpp \
+	object.cpp \
+	introspection.cpp \
+	debug.cpp \
+	types.cpp \
+	connection.cpp \
+	connection_p.h \
+	property.cpp \
+	dispatcher.cpp \
+	dispatcher_p.h \
+	pendingcall.cpp \
+	pendingcall_p.h \
+	error.cpp \
+	internalerror.h \
+	message.cpp \
+	message_p.h \
+	server.cpp \
+	server_p.h \
+	eventloop.cpp \
+	eventloop-integration.cpp \
+	$(GLIB_CPP) $(ECORE_CPP) $(BOOST_CPP)
+libdbus_c___1_la_LIBADD = $(dbus_LIBS) $(glib_LIBS) $(boost_LIBS) $(PTHREAD_CFLAGS) $(PTHREAD_LIBS) $(ecore_LIBS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

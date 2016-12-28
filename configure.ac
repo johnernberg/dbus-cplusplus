@@ -34,6 +34,13 @@ AC_ARG_ENABLE(glib,
 	[enable_glib=no]
 )
 
+AC_ARG_ENABLE(boost,
+	AS_HELP_STRING([--enable-boost],
+		[enable boost integration]),
+	[enable_boost=$enableval],
+	[enable_boost=no]
+)
+
 AC_ARG_ENABLE(doxygen-docs,
 	AS_HELP_STRING([--enable-doxygen-docs],
 		[build DOXYGEN documentation (requires Doxygen)]),
@@ -119,6 +126,22 @@ AC_SUBST(ecore_LIBS)
 AM_CONDITIONAL(ENABLE_ECORE, test 1 = 1)
 else
 AM_CONDITIONAL(ENABLE_ECORE, test 0 = 1)
+fi
+
+if test "$enable_boost" = "yes" ; then
+# No pkg config for this one...
+# Bad check for the directly required headers
+# There's no sensible way to check for boost at all without
+# using boost.m4, but that is GPLv3
+AC_CHECK_HEADERS(
+	[boost/assert.hpp boost/asio.hpp boost/bind.hpp boost/system/error_code.hpp],
+	[],
+	[AC_MSG_ERROR([You need the boost libraries][http://www.boost.org])])
+AC_SUBST(boost_CFLAGS)
+AC_SUBST(boost_LIBS, [-lboost_system])
+AM_CONDITIONAL(ENABLE_BOOST, test 1 = 1)
+else
+AM_CONDITIONAL(ENABLE_BOOST, test 0 = 1)
 fi
 
 EXPAT_VERSION=2.1.0
